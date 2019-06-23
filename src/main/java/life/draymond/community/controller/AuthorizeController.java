@@ -5,6 +5,7 @@ import life.draymond.community.dto.GitHubUser;
 import life.draymond.community.dto.AccesstokenDTO;
 import life.draymond.community.mapper.UserMapper;
 import life.draymond.community.model.User;
+import life.draymond.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -31,8 +32,10 @@ public class AuthorizeController {
     @Value("${github.redirect.uri}")
     private String redirectUri;
 
+
+
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String  callback(@RequestParam(name="code") String  code ,
@@ -52,23 +55,24 @@ public class AuthorizeController {
         GitHubUser gitHubUser = gitHubProvider.getUser(accessToken);
 
         //授权成功则将user对象传到session当中去
-        if(gitHubUser!=null){
-            User user=new User();
+        if(gitHubUser!=null&&gitHubUser.getId() !=null){
 
-            String token=UUID.randomUUID().toString();
-            user.setToken(token);
-            user.setAccountId(String.valueOf(gitHubUser.getId()));
-            user.setName(gitHubUser.getName());
-            user.setAvatarUrl(gitHubUser.getAvatar_url());
-            user.setGmtModified(System.currentTimeMillis());
-            user.setGmtCreate(System.currentTimeMillis());
+            String token =userService.createOrUpdate(gitHubUser);
 
-            userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
             return "redirect:/";
         }else{
             return "redirect:/";
         }
+    }
 
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                        HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie=new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }

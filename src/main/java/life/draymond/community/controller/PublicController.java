@@ -1,19 +1,19 @@
 package life.draymond.community.controller;
 
-import life.draymond.community.mapper.QuestionMapper;
+import life.draymond.community.dto.QuestionDTO;
 import life.draymond.community.mapper.UserMapper;
 import life.draymond.community.model.Question;
 import life.draymond.community.model.User;
+import life.draymond.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 public class PublicController {
@@ -21,13 +21,14 @@ public class PublicController {
     @Autowired
     UserMapper userMapper;
 
+
+
     @Autowired
-    QuestionMapper questionMapper;
+    private QuestionService questionService;
 
 
     @GetMapping("/publish")
     public String publish() {
-
         return "publish";
     }
 
@@ -35,6 +36,7 @@ public class PublicController {
     public String dopublish(@RequestParam(value = "title", required = false) String title,
                             @RequestParam(value = "description", required = false) String description,
                             @RequestParam(value = "tag", required = false) String tag,
+                            @RequestParam(value = "id", required = false) Long id,
                             HttpServletRequest request,
                             Model model
     ) {
@@ -67,10 +69,22 @@ public class PublicController {
         question.setTag(tag);
         question.setTitle(title);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(System.currentTimeMillis());
-        questionMapper.create(question);
+        question.setId(id);
+
+        questionService.createOrUpdate(question);
 
         return "redirect:/";
+    }
+
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable(name = "id") Long id,
+                       Model model){
+        QuestionDTO question = questionService.getById(id);
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("description", question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        model.addAttribute("id", question.getId());
+        return "publish";
     }
 }

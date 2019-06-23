@@ -1,0 +1,2 @@
+ALTER TABLE comment
+ALTER like_count SET DEFAULT 0
