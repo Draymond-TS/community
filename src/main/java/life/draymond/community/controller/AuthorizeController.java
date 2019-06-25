@@ -1,10 +1,8 @@
 package life.draymond.community.controller;
 
 import life.draymond.community.Provider.GitHubProvider;
-import life.draymond.community.dto.GitHubUser;
 import life.draymond.community.dto.AccesstokenDTO;
-import life.draymond.community.mapper.UserMapper;
-import life.draymond.community.model.User;
+import life.draymond.community.dto.GitHubUser;
 import life.draymond.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @Controller
 public class AuthorizeController {
@@ -31,8 +27,6 @@ public class AuthorizeController {
 
     @Value("${github.redirect.uri}")
     private String redirectUri;
-
-
 
     @Autowired
     private UserService userService;
