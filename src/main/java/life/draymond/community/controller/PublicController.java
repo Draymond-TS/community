@@ -70,6 +70,9 @@ public class PublicController {
         question.setTitle(title);
         question.setCreator(user.getId());
         question.setId(id);
+        question.setViewCount(0);
+        question.setCommentCount(0);
+        question.setLikeCount(0);
 
         questionService.createOrUpdate(question);
 

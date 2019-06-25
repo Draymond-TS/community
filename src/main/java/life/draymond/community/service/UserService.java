@@ -1,11 +1,13 @@
 package life.draymond.community.service;
 
+
 import life.draymond.community.dto.GitHubUser;
 import life.draymond.community.mapper.UserMapper;
 import life.draymond.community.model.User;
 import life.draymond.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +17,7 @@ public class UserService {
     @Autowired
     public UserMapper userMapper;
 
-
+    @Transactional
     public String createOrUpdate(GitHubUser gitHubUser) {
         UserExample userExample=new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(String.valueOf(gitHubUser.getId()));

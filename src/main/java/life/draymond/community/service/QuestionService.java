@@ -1,10 +1,10 @@
 package life.draymond.community.service;
 
+
 import life.draymond.community.dto.PaginationDTO;
 import life.draymond.community.dto.QuestionDTO;
 import life.draymond.community.exception.CustomizeErrorCode;
 import life.draymond.community.exception.CustomizeException;
-import life.draymond.community.exception.ICustomizeErrorCode;
 import life.draymond.community.mapper.QuestionExtMapper;
 import life.draymond.community.mapper.QuestionMapper;
 import life.draymond.community.mapper.UserMapper;
@@ -15,6 +15,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class QuestionService {
     private UserMapper userMapper;
 
     @Autowired
-    private  QuestionMapper questionMapper;
+    private QuestionMapper questionMapper;
 
     @Autowired
     private QuestionExtMapper questionExtMapper;
@@ -88,6 +89,7 @@ public class QuestionService {
 
     }
 
+
     public QuestionDTO getById(Long id) {
         Question question=questionMapper.selectByPrimaryKey(id);
         if(question == null){
@@ -101,6 +103,7 @@ public class QuestionService {
         return questionDTO;
     }
 
+    @Transactional
     public void createOrUpdate(Question question) {
         if(question.getId()==null){
             //创建
