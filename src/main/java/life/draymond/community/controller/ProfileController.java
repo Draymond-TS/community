@@ -3,6 +3,7 @@ package life.draymond.community.controller;
 import life.draymond.community.dto.PaginationDTO;
 import life.draymond.community.mapper.UserMapper;
 import life.draymond.community.model.User;
+import life.draymond.community.service.NotificationService;
 import life.draymond.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
@@ -22,6 +23,9 @@ public class ProfileController {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(HttpServletRequest request,
@@ -43,7 +47,11 @@ public class ProfileController {
             PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
             model.addAttribute("pagination", paginationDTO);
         } else if ("replies".equals(action)) {
+            PaginationDTO paginationDTO =notificationService.list(user.getId(), page, size);
+            Integer unreadCount = notificationService.unreadCount(user.getId());
             model.addAttribute("section", "replies");
+            model.addAttribute("pagination", paginationDTO);
+            model.addAttribute("unreadCount", unreadCount);
             model.addAttribute("sectionName", "最新回复");
         }
         return "profile";

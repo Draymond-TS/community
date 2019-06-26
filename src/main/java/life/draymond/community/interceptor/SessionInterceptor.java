@@ -3,6 +3,7 @@ package life.draymond.community.interceptor;
 import life.draymond.community.mapper.UserMapper;
 import life.draymond.community.model.User;
 import life.draymond.community.model.UserExample;
+import life.draymond.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -21,23 +22,29 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length != 0) {
+        if (cookies != null && cookies.length != 0)
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")) {
-                    UserExample userExample=new UserExample();
-                    userExample.createCriteria().andTokenEqualTo(cookie.getValue());
+                    String token = cookie.getValue();
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria()
+                            .andTokenEqualTo(token);
                     List<User> users = userMapper.selectByExample(userExample);
                     if (users.size() != 0) {
                         request.getSession().setAttribute("user", users.get(0));
+
+                        Integer unreadCount = notificationService.unreadCount(users.get(0).getId());
+                        request.getSession().setAttribute("unreadCount", unreadCount);
                     }
                     break;
                 }
             }
-        }
         return true;
     }
 

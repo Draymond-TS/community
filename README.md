@@ -37,3 +37,12 @@
 </build>
 
 ```
+
+
+2.JS文件导入失败
+```html
+//区分type的不同
+<script src="" type="application/javascript"></script>
+<script src="" type="text/javascript"></script>
+```
+
