@@ -1,6 +1,22 @@
 ## Draymond 社区
 
-##技术
+## 技术
+前端：Bootstrap+Thymeleaf  
+后端：Spring Web+mybatis+Github OAuth+MySQL
+
+
+
+## 工具
+Flyway
+Lombok
+Postman
+
+## 脚本
+```bash
+mvn flyway:migrate
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+```
+
 
 ##问题解决
 1.mybatis-generator导入失败
