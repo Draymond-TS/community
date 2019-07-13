@@ -3,6 +3,8 @@ package life.draymond.community.controller;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import life.draymond.community.Provider.UCloudProvider;
 import life.draymond.community.dto.FileDTO;
+import life.draymond.community.exception.CustomizeErrorCode;
+import life.draymond.community.exception.CustomizeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +28,16 @@ public class FileController {
         //获取request里面的参数
         MultipartFile file = multipartRequest.getFile("editormd-image-file");
         try {
-            uCloudProvider.upload(file.getInputStream(),file.getContentType(),file.getOriginalFilename());
+            String fileName = uCloudProvider.upload(file.getInputStream(), file.getContentType(), file.getOriginalFilename());
+            FileDTO fileDTO = new FileDTO();
+            fileDTO.setSuccess(1);
+            fileDTO.setUrl(fileName);
+            return fileDTO;
         } catch (IOException e) {
             e.printStackTrace();
+            throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
         }
 
-        FileDTO fileDTO = new FileDTO();
-        fileDTO.setSuccess(1);
-        fileDTO.setUrl("/images/wechat.png");
-
-        return fileDTO;
     }
 
 }
